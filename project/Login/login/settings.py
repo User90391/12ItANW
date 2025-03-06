@@ -20,19 +20,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = 'django-insecure-&#&y(d9$o)l5nzpz=_ru&7mje8!e=zg)pfp@k-%(+l%0tw+iqx'
-SECRET_KEY = os.environ.get('SECRET_KEY') #Using Docker OV environment variable
+SECRET_KEY = 'django-insecure-&#&y(d9$o)l5nzpz=_ru&7mje8!e=zg)pfp@k-%(+l%0tw+iqx'
+# SECRET_KEY = os.environ.get('SECRET_KEY') #Using Docker OV environment variable
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
-DEBUG = os.environ.get('DEBUG') #Using Docker OV environment variable
+DEBUG = True
+# DEBUG = os.environ.get('DEBUG') #Using Docker OV environment variable
 
-#ALLOWED_HOSTS = [
-#    '172.30.2.104',
-#    '127.0.0.1',
-#    'localhost'
-#]
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(',') #Using Docker OV environment variable
+ALLOWED_HOSTS = [
+   '172.30.2.104',
+   '127.0.0.1',
+   'localhost'
+]
+#ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(',') #Using Docker OV environment variable
 
 
 # Application definition
@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mylogin',
-    'bootstrap5',
+    # 'django-bootstrap5',  # Entferne diesen Eintrag
 ]
 
 MIDDLEWARE = [
@@ -124,7 +124,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+# Add this line to specify the static files directory
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
