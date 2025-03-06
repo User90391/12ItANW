@@ -63,7 +63,7 @@ def login(request):
                 userId = ""
 
                 try:
-                    userId = timestamp_signer.unsign(registerCode, max_age=1)  # 36000 Sekunden = 10 Stunden
+                    userId = timestamp_signer.unsign(registerCode, max_age=36000)  # 36000 Sekunden = 10 Stunden
 
                     # Kucken ob es ein Objekt mit der ID gibt und ob es noch nicht bestätigt wurde
                     if User.objects.filter(id=userId, isVerified=False).exists():
