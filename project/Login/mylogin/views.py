@@ -9,13 +9,16 @@ from .models import User
 from django.http import JsonResponse
 from django.core.signing import TimestampSigner, SignatureExpired, BadSignature
 
-import re
+from .utils import fetch_data_from_api
 
 # Create your views here.
 
 def login(request):
     message = ""
     timestamp_signer = TimestampSigner()
+
+    response_data = fetch_data_from_api("https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m")
+    print(response_data)
 
     if request.method == 'POST':
         match request.POST['todo']:
