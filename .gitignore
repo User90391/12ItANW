@@ -1,5 +1,5 @@
 # Gitignore-Datei, um unerwünschte Dateien zu ignorieren
-Login/env/
-Login/.venv/
+project/Login/env/
+project/Login/.venv/
 __pycache__
 *.sqlite3
