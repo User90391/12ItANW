@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
 </head>
 <body>
     <div class="container">
@@ -69,51 +70,7 @@
         </div>
     </div>
     
-    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}">
-
-        // Während der Passworteingabe wird geprüft, ob das Passwort den Anforderungen entspricht
-        function checkPassword() {
-            let password = document.getElementById('loginPassword').value.trim();
-
-            const lengthRegex = /.{8,}/; // Mindestens 8 Zeichen
-            const ulCaseRegex = /(?=.*[a-z])(?=.*[A-Z])/; // Mindestens ein Groß- und Kleinbuchstabe
-            const numberRegex = /(?=.*\d)/; // Mindestens eine Zahl
-            const symbolRegex = /(?=.*[!-\/:-@[-`{-~])/; // Mindestens ein Sonderzeichen
-
-            if (!lengthRegex.test(password)) {
-                document.getElementById('passwordCheckLength').classList.add('text-danger');
-                document.getElementById('passwordCheckLength').classList.remove('text-success');
-            } else {
-                document.getElementById('passwordCheckLength').classList.remove('text-danger');
-                document.getElementById('passwordCheckLength').classList.add('text-success');
-            }
-
-            if (!ulCaseRegex.test(password)) {
-                document.getElementById('passwordCheckULCase').classList.add('text-danger');
-                document.getElementById('passwordCheckULCase').classList.remove('text-success');
-            } else {
-                document.getElementById('passwordCheckULCase').classList.remove('text-danger');
-                document.getElementById('passwordCheckULCase').classList.add('text-success');
-            }
-
-            if (!numberRegex.test(password)) {
-                document.getElementById('passwordCheckNumber').classList.add('text-danger');
-                document.getElementById('passwordCheckNumber').classList.remove('text-success');
-            } else {
-                document.getElementById('passwordCheckNumber').classList.remove('text-danger');
-                document.getElementById('passwordCheckNumber').classList.add('text-success');
-            }
-
-            if (!symbolRegex.test(password)) {
-                document.getElementById('passwordCheckSymbol').classList.add('text-danger');
-                document.getElementById('passwordCheckSymbol').classList.remove('text-success');
-            } else {
-                document.getElementById('passwordCheckSymbol').classList.remove('text-danger');
-                document.getElementById('passwordCheckSymbol').classList.add('text-success');
-            }
-        }
-
-
+    <script>
         async function tryRegister() {
             // Button deaktivieren
             document.getElementById('submitRegister').classList.add("disabled");
