@@ -9,6 +9,8 @@ from .models import User
 from django.http import JsonResponse
 from django.core.signing import TimestampSigner, SignatureExpired, BadSignature
 
+import re
+
 # Create your views here.
 
 def login(request):
@@ -21,10 +23,30 @@ def login(request):
             # Wenn der User sich registrieren möchte
             case 'register':
                 email = request.POST['email']
-                password_hash = User.password_hasher(request.POST['password'])
+                password = request.POST['password']
+                passwordAgain = request.POST['passwordAgain']
 
-                if not User.objects.filter(email=email).exists(): # Kucken ob nicht schon jemand diese E-Mail hat
-                    user = User.objects.create(email = email, password_hash = password_hash, isVerified = 0) # Objekt erstellen
+                #Backend Überprüfung der Email
+                pattern = re.compile("^[^\s@]+@[^\s@]+\.[^\s@]+$")
+                
+                if (not pattern.match(email)):
+                    return JsonResponse({'error': 'emailPattern'})
+
+                #Backend Überprüfung des Passwortes
+                pattern = re.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!-\/:-@[-`{-~])[A-Za-z\d!-\/:-@[-`{-~]{8,}$")
+                
+                if (not pattern.match(password)):
+                    return JsonResponse({'error': 'passwordPattern'})
+                
+                if (password != passwordAgain):
+                    return JsonResponse({'error': 'passwordMatch'})
+
+                password_hash = User.password_hasher(password)
+
+                # Kucken ob nicht schon jemand diese E-Mail hat
+                if not User.objects.filter(email=email).exists():
+                    # Objekt erstellen
+                    user = User.objects.create(email = email, password_hash = password_hash, isVerified = 0) 
 
                     # Signatur erstellen
                     registerCode = timestamp_signer.sign(str(user.id))
@@ -71,6 +93,13 @@ def login(request):
                         user.isVerified = True
                         user.save()
                         message = "userConfirmed"
+
+
+
+                        # API Chripstack anfragen
+
+
+
                     else:
                         message = "userAlreadyConfirmed"
 
