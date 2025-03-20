@@ -28,44 +28,141 @@
             </div>
         </div>
         <div class="row justify-content-center">
-            <div class="col-4">
-                <div class="form-floating mb-3">
-                    <input type="email" class="form-control" id="loginEmail" placeholder="name@example.com">
-                    <label for="loginEmail">Email address</label>
-                  </div>
-                  <div class="form-floating">
-                    <input type="password" class="form-control" id="loginPassword" placeholder="Password">
-                    <label for="loginPassword">Password</label>
-                  </div>
+            <div class="col-md-4 col-sm-6 col-10 mt-4">
+                <div class="form-floating mb-4">
+                    <input type="email" class="form-control" id="loginEmail" placeholder="E-Mail-Adresse">
+                    <label for="loginEmail">E-Mail-Adresse</label>
+                </div>
+                <div class="has-validation mb-3">
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="loginPassword" placeholder="Passwort" oninput="checkPassword()">
+                        <label for="loginPassword">Passwort</label>
+                    </div>
+                    <div class="invalid-feedback">
+                        Die Passwort entspricht nicht den Richtlinien!
+                    </div>
+                </div>
+                
+                <div class="has-validation">
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="loginPasswordAgain" placeholder="Passwort erneut">
+                        <label for="loginPasswordAgain">Passwort erneut</label>
+                    </div>
+                    <div class="invalid-feedback">
+                        Die beiden Passwörter stimmen nicht überein!
+                    </div>
+                </div>
+                <ul class="mt-3">
+                    <li id="passwordCheckLength">Mindestens 8 Zeichen</li>
+                    <li id="passwordCheckULCase">Mindestens 1 Groß- und Kleinbuchstabe</li>
+                    <li id="passwordCheckNumber">Mindestens 1 Ziffer</li>
+                    <li id="passwordCheckSymbol">Mindestens 1 Sonderzeichen</li>
+                </ul>
             </div>
         </div>
         <div class="text-center mt-3">
-            <a class="btn btn-primary" role="button" id="submitRegister" onclick="tryRegister()">
+            <a class="btn btn-success" role="button" id="submitRegister" onclick="tryRegister()">
                 Registrieren
             </a>
-            <a class="btn btn-primary" role="button" href="#"><!-- Hier muss noch der Link zum Chripstack eingefügt werden -->
+            <a class="btn btn-primary" role="button" href="#"><!-- TODO Hier muss noch der Link zum Chripstack eingefügt werden -->
                 Zum Login
             </a>
         </div>
     </div>
     
     <script>
+
+        // Während der Passworteingabe wird geprüft, ob das Passwort den Anforderungen entspricht
+        function checkPassword() {
+            let password = document.getElementById('loginPassword').value.trim();
+
+            const lengthRegex = /.{8,}/; // Mindestens 8 Zeichen
+            const ulCaseRegex = /(?=.*[a-z])(?=.*[A-Z])/; // Mindestens ein Groß- und Kleinbuchstabe
+            const numberRegex = /(?=.*\d)/; // Mindestens eine Zahl
+            const symbolRegex = /(?=.*[!-\/:-@[-`{-~])/; // Mindestens ein Sonderzeichen
+
+            if (!lengthRegex.test(password)) {
+                document.getElementById('passwordCheckLength').classList.add('text-danger');
+                document.getElementById('passwordCheckLength').classList.remove('text-success');
+            } else {
+                document.getElementById('passwordCheckLength').classList.remove('text-danger');
+                document.getElementById('passwordCheckLength').classList.add('text-success');
+            }
+
+            if (!ulCaseRegex.test(password)) {
+                document.getElementById('passwordCheckULCase').classList.add('text-danger');
+                document.getElementById('passwordCheckULCase').classList.remove('text-success');
+            } else {
+                document.getElementById('passwordCheckULCase').classList.remove('text-danger');
+                document.getElementById('passwordCheckULCase').classList.add('text-success');
+            }
+
+            if (!numberRegex.test(password)) {
+                document.getElementById('passwordCheckNumber').classList.add('text-danger');
+                document.getElementById('passwordCheckNumber').classList.remove('text-success');
+            } else {
+                document.getElementById('passwordCheckNumber').classList.remove('text-danger');
+                document.getElementById('passwordCheckNumber').classList.add('text-success');
+            }
+
+            if (!symbolRegex.test(password)) {
+                document.getElementById('passwordCheckSymbol').classList.add('text-danger');
+                document.getElementById('passwordCheckSymbol').classList.remove('text-success');
+            } else {
+                document.getElementById('passwordCheckSymbol').classList.remove('text-danger');
+                document.getElementById('passwordCheckSymbol').classList.add('text-success');
+            }
+        }
+
+
         async function tryRegister() {
             // Button deaktivieren
             document.getElementById('submitRegister').classList.add("disabled");
             document.getElementById('submitRegister').setAttribute('aria-disabled', true);
 
-            let email = document.getElementById('loginEmail').value;
-            let password = document.getElementById('loginPassword').value;
+            let email = document.getElementById('loginEmail').value.trim();
+            let password = document.getElementById('loginPassword').value.trim();
+            let passwordAgain = document.getElementById('loginPasswordAgain').value.trim();
 
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            //Regex für E-Mail und Passwort
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Mindestens ein Zeichen vor dem @, ein @, mindestens ein Zeichen vor dem Punkt, ein Punkt, mindestens ein Zeichen nach dem Punkt
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!-\/:-@[-`{-~])[A-Za-z\d!-\/:-@[-`{-~]{8,}$/; // Mindestens 8 Zeichen, mindestens ein Großbuchstabe, ein Kleinbuchstabe, eine Zahl und ein Sonderzeichen
 
+            let success = true;
+
+            //Falls E-Mail nicht gültig ist, wird das Feld rot markiert
             if (!emailRegex.test(email)) {
-                //Falls E-Mail nicht gültig ist, wird das Feld rot markiert
                 document.getElementById('loginEmail').classList.add('is-invalid');
-                return false;
+                success = false;
             } else {
                 document.getElementById('loginEmail').classList.remove('is-invalid');
+            }
+
+            //Falls Passwort nicht Richtlinien entspricht, wird das Feld rot markiert
+            if (!passwordRegex.test(password)) {
+                document.getElementById('loginPassword').classList.add('is-invalid');
+                document.getElementById('loginPassword').parentElement.classList.add('is-invalid');
+                success = false;
+            } else {
+                document.getElementById('loginPassword').classList.remove('is-invalid');
+                document.getElementById('loginPassword').parentElement.classList.remove('is-invalid');
+            }
+
+            //Falls Passwort nicht mit dem Passwort im zweiten Feld übereinstimmt, wird das Feld rot markiert
+            if (password != passwordAgain) {
+                document.getElementById('loginPasswordAgain').classList.add('is-invalid');
+                document.getElementById('loginPasswordAgain').parentElement.classList.add('is-invalid');
+                success = false;
+            } else {
+                document.getElementById('loginPasswordAgain').classList.remove('is-invalid');
+                document.getElementById('loginPasswordAgain').parentElement.classList.remove('is-invalid');
+            }
+
+            //Wenn ein Fehler aufgetreten ist, wird die Funktion beendet
+            if (success == false) {
+                document.getElementById('submitRegister').classList.remove("disabled");
+                document.getElementById('submitRegister').setAttribute('aria-disabled', false);
+                return false;
             }
 
             //POST Request an Django-Server
@@ -75,7 +172,9 @@
             formData.append('todo', 'register');
             formData.append('email', email);
             formData.append('password', password);
+            formData.append('passwordAgain', passwordAgain);
             formData.append('csrfmiddlewaretoken', token);
+
             let response = await fetch('/login/', {
                 method: 'POST',
                 body: formData
@@ -84,12 +183,46 @@
             //Wenn Antwort vom Server OK ist, also ohne Fehler, wird die Antwort in JSON umgewandelt und ausgewertet
             if (response.ok) {
                 let data = await response.json();
+                //Wenn die E-Mail bereits vorhanden ist, wird eine Fehlermeldung angezeigt
                 if (data.error === "emailVorhanden") {
                     document.getElementById('submitRegister').classList.remove("disabled");
                     document.getElementById('submitRegister').setAttribute('aria-disabled', false);
                     
                     document.getElementById('emailVorhandenError').removeAttribute('hidden', true);
                     document.getElementById('emailConfirm').setAttribute('hidden', true);
+
+                //Wenn die E-Mail keine ist, wird eine Fehlermeldung angezeigt    
+                } else if (data.error === "emailPattern") {
+                    document.getElementById('submitRegister').classList.remove("disabled");
+                    document.getElementById('submitRegister').setAttribute('aria-disabled', false);
+                    
+                    document.getElementById('loginEmail').classList.add('is-invalid');
+                    
+                    document.getElementById('emailVorhandenError').setAttribute('hidden', true);
+                    document.getElementById('emailConfirm').setAttribute('hidden', true);
+
+                //Wenn das Passwort nicht den Richtlinien entspricht, wird eine Fehlermeldung angezeigt    
+                } else if (data.error === "passwordPattern") {
+                    document.getElementById('submitRegister').classList.remove("disabled");
+                    document.getElementById('submitRegister').setAttribute('aria-disabled', false);
+                    
+                    document.getElementById('loginPassword').classList.add('is-invalid');
+                    document.getElementById('loginPassword').parentElement.classList.add('is-invalid');
+
+                    document.getElementById('emailVorhandenError').setAttribute('hidden', true);
+                    document.getElementById('emailConfirm').setAttribute('hidden', true);
+
+                //Wenn die Passwörter nicht übereinstimmen, wird eine Fehlermeldung angezeigt    
+                } else if (data.error === "passwordMatch") {
+                    document.getElementById('submitRegister').classList.remove("disabled");
+                    document.getElementById('submitRegister').setAttribute('aria-disabled', false);
+                    
+                    document.getElementById('loginPasswordAgain').classList.add('is-invalid');
+                    document.getElementById('loginPasswordAgain').parentElement.classList.add('is-invalid');
+
+                    document.getElementById('emailVorhandenError').setAttribute('hidden', true);
+                    document.getElementById('emailConfirm').setAttribute('hidden', true);
+
                 } else {
                     document.getElementById('emailVorhandenError').setAttribute('hidden', true);
                     document.getElementById('emailConfirm').removeAttribute('hidden', true);
