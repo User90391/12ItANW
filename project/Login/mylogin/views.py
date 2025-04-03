@@ -62,14 +62,24 @@ def login(request):
 
             # Wenn der User den Link erneut erhalten möchte    
             case 'resendEmail':
-                # UserId entschlüsseln, neuen Registercode erstellen, Objekt holen und E-Mail senden 
-                encryptUserId = request.POST['userId']
-                userId = timestamp_signer.unsign(encryptUserId)
+                site = request.POST['site']
+                
+                if site == "confirmation":
+                    # UserId entschlüsseln, neuen Registercode erstellen, Objekt holen und E-Mail senden 
+                    encryptUserId = request.POST['userId']
+                    userId = timestamp_signer.unsign(encryptUserId)
 
-                registerCode = timestamp_signer.sign(str(userId))
+                    registerCode = timestamp_signer.sign(str(userId))
 
-                user = User.objects.get(id=userId, isVerified=False)
-                email = user.email
+                    user = User.objects.get(id=userId, isVerified=False)
+                    email = user.email
+
+                elif site == "register":
+                    email = request.POST['email']
+                    user = User.objects.get(email=email, isVerified=False)
+
+                    registerCode = timestamp_signer.sign(str(user.id))
+                    email = user.email
 
                 # E-Mail senden
                 sendEmail(registerCode, email)
