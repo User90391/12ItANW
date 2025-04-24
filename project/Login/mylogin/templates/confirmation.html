@@ -1,12 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Urban Climate Registrierung</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {% load bootstrap5 %}
-    {% bootstrap_css %}
-    {% bootstrap_javascript %}
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
 </head>
 <body>
     <div class="container">
@@ -80,7 +79,7 @@
 
     <!-- Wenn die Signatur abgelaufen ist -->
     {% if message == "toLate" %}
-        <script>
+        <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}">
             document.getElementById('resendConfirmation').addEventListener('click', async function() {
                 document.getElementById('resendConfirmation').classList.add("disabled");
                 document.getElementById('resendConfirmation').setAttribute('aria-disabled', true);

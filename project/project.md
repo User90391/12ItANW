@@ -18,7 +18,7 @@
 python -m venv env
 ```
 
-- Danach falls nicht automatisch, müssen wir die virtuelle Umgebung noch starten:
+- Danach müssen wir die virtuelle Umgebung noch starten:
 ```sh
 env/Scripts/activate
 ```
