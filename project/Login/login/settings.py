@@ -146,3 +146,5 @@ EMAIL_PORT = 465
 DEFAULT_REPLY_TO = 'no_reply@chripstack.network'
 EMAIL_HOST_USER = 'register@chirpstack.network'
 EMAIL_HOST_PASSWORD = 'R3g1st3r16.10-2021'
+
+URL_LINK = "http://127.0.0.1:8000/login"

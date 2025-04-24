@@ -11,6 +11,8 @@ from django.core.signing import TimestampSigner, SignatureExpired, BadSignature
 
 from .utils import fetch_data_from_api
 
+import re
+
 # Create your views here.
 
 def login(request):
@@ -137,7 +139,7 @@ def sendEmail(registerCode, email):
         
         # HTML-Inhalt erstellen
         html_message = render_to_string('mail_template.html', {
-            'context': f'<a href="http://127.0.0.1:8000/login?registerCode={registerCode}">Hier Klicken</a>'
+            'url': f'{ settings.URL_LINK }?registerCode={ registerCode }'
         })
         plain_message = strip_tags(html_message)
         
