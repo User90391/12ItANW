@@ -18,7 +18,7 @@ async def send_data_to_api(url, data=None, headers=None):
         print(f"API-Fehler: {e}")
         return None
 
-def get_all_organizations():
+async def get_all_organizations():
     url = "Base_URL/api/organizations"
     response_body = await fetch_data_from_api(url)
     limit = response_body.get("totalCount")
