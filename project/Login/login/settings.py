@@ -33,7 +33,8 @@ ALLOWED_HOSTS = [
    '0.0.0.0',
    '127.0.0.1',
    'localhost',
-   'd455.de'
+   'd455.de',
+   'register.chirpstack.network'
 ]
 #ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(',') #Using Docker OV environment variable
 
@@ -148,6 +149,8 @@ EMAIL_PORT = 465
 DEFAULT_REPLY_TO = 'no_reply@chripstack.network'
 EMAIL_HOST_USER = 'register@chirpstack.network'
 EMAIL_HOST_PASSWORD = 'R3g1st3r16.10-2021'
+
+URL_LINK = "http://127.0.0.1:8000/login"
 
 #API Chirpnode
 API_KEY = os.getenv("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5X2lkIjoiODE3NmZiNDQtYmUwMS00NjhkLTliOTEtNjk0OTMzZmQzYTFjIiwiYXVkIjoiYXMiLCJpc3MiOiJhcyIsIm5iZiI6MTc0MzY2Mzk0NSwic3ViIjoiYXBpX2tleSJ9.ZsP3CWJ4C3uFKm6t1K23I650yn9V_WhDYBslaYHuqdE")

@@ -9,6 +9,8 @@ from .models import User
 from django.http import JsonResponse
 from django.core.signing import TimestampSigner, SignatureExpired, BadSignature
 
+from .utils import fetch_data_from_api
+
 import re
 import requests
 
@@ -18,6 +20,9 @@ import requests
 def login(request):
     message = ""
     timestamp_signer = TimestampSigner()
+
+    response_data = fetch_data_from_api("https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m")
+    print(response_data)
 
     if request.method == 'POST':
         match request.POST['todo']:
@@ -64,14 +69,24 @@ def login(request):
 
             # Wenn der User den Link erneut erhalten möchte    
             case 'resendEmail':
-                # UserId entschlüsseln, neuen Registercode erstellen, Objekt holen und E-Mail senden 
-                encryptUserId = request.POST['userId']
-                userId = timestamp_signer.unsign(encryptUserId)
+                site = request.POST['site']
+                
+                if site == "confirmation":
+                    # UserId entschlüsseln, neuen Registercode erstellen, Objekt holen und E-Mail senden 
+                    encryptUserId = request.POST['userId']
+                    userId = timestamp_signer.unsign(encryptUserId)
 
-                registerCode = timestamp_signer.sign(str(userId))
+                    registerCode = timestamp_signer.sign(str(userId))
 
-                user = User.objects.get(id=userId, isVerified=False)
-                email = user.email
+                    user = User.objects.get(id=userId, isVerified=False)
+                    email = user.email
+
+                elif site == "register":
+                    email = request.POST['email']
+                    user = User.objects.get(email=email, isVerified=False)
+
+                    registerCode = timestamp_signer.sign(str(user.id))
+                    email = user.email
 
                 # E-Mail senden
                 sendEmail(registerCode, email)
@@ -127,7 +142,7 @@ def sendEmail(registerCode, email):
         
         # HTML-Inhalt erstellen
         html_message = render_to_string('mail_template.html', {
-            'context': f'<a href="http://127.0.0.1:8000/login?registerCode={registerCode}">Hier Klicken</a>'
+            'url': f'{ settings.URL_LINK }?registerCode={ registerCode }'
         })
         plain_message = strip_tags(html_message)
         

@@ -3,6 +3,7 @@
 <html>
 <head>
     <title>Urban Climate Registrierung</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'pictures/urbanClimateIcon.png' %}">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
@@ -18,19 +19,21 @@
         <div class="row justify-content-center" id="emailVorhandenError" hidden>
             <div class="col-4">
                 <div class="alert alert-danger" role="alert">
-                    Email bereits vorhanden!
+                    E-Mail bereits vorhanden!
                 </div>
             </div>
         </div>
         <div class="row justify-content-center" id="emailConfirm" hidden>
-            <div class="col-4">
+            <div class="col-md-6">
                 <div class="alert alert-success" role="alert">
-                    Bitte bestätigen Sie Ihre Email-Adresse über die E-Mail, die wir Ihnen zugesendet haben!
+                    Bitte verifizieren Sie sich über die E-Mail, die wir Ihnen zugesendet haben!<br>
+                    Überprüfen Sie ebenfalls Ihren Spam-Ordner, falls die E-Mail nicht ankommt.<br>
+                    Oder klicken Sie <a type="button" id="resendEmail" class="link-opacity-100" onclick="resendEmail()">->hier<-</a>, um die E-Mail erneut zu versenden.
                 </div>
             </div>
         </div>
         <div class="row justify-content-center">
-            <div class="col-md-4 col-sm-6 col-10 mt-4">
+            <div class="col-lg-4 col-md-6 col-sm-8 col-10 mt-4">
                 <div class="form-floating mb-4">
                     <input type="email" class="form-control" id="loginEmail" placeholder="E-Mail-Adresse">
                     <label for="loginEmail">E-Mail-Adresse</label>
@@ -41,7 +44,7 @@
                         <label for="loginPassword">Passwort</label>
                     </div>
                     <div class="invalid-feedback">
-                        Die Passwort entspricht nicht den Richtlinien!
+                        Das Passwort entspricht nicht den Richtlinien!
                     </div>
                 </div>
                 
@@ -62,13 +65,25 @@
                 </ul>
             </div>
         </div>
-        <div class="text-center mt-3">
+        <div class="text-center mt-3 mb-5">
             <a class="btn btn-success" role="button" id="submitRegister" onclick="tryRegister()">
                 Registrieren
             </a>
             <a class="btn btn-primary" role="button" href="#"><!-- TODO Hier muss noch der Link zum Chripstack eingefügt werden -->
                 Zum Login
             </a>
+        </div>
+        <div id="footer" class="fixed-bottom bg-white">
+            <div class="row">
+                <div class="col-12">
+                    <p class="text-center">
+                        <!-- Über die Links dann vielleicht einfach Modals öffnen lassen. Elegante Lösung ohne Laden einer neuen Seite -->
+                        © 2025 Urban Climate&nbsp;
+                        <a href="#">Impressum</a>&nbsp;
+                        <a href="#">Datenschutz</a>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -79,7 +94,7 @@
  
             const lengthRegex = /.{8,}/; // Mindestens 8 Zeichen
             const ulCaseRegex = /(?=.*[a-z])(?=.*[A-Z])/; // Mindestens ein Groß- und Kleinbuchstabe
-             const numberRegex = /(?=.*\d)/; // Mindestens eine Zahl
+            const numberRegex = /(?=.*\d)/; // Mindestens eine Zahl
             const symbolRegex = /(?=.*[!-\/:-@[-`{-~])/; // Mindestens ein Sonderzeichen
  
             if (!lengthRegex.test(password)) {
@@ -183,52 +198,95 @@
             //Wenn Antwort vom Server OK ist, also ohne Fehler, wird die Antwort in JSON umgewandelt und ausgewertet
             if (response.ok) {
                 let data = await response.json();
-                //Wenn die E-Mail bereits vorhanden ist, wird eine Fehlermeldung angezeigt
-                if (data.error === "emailVorhanden") {
-                    document.getElementById('submitRegister').classList.remove("disabled");
-                    document.getElementById('submitRegister').setAttribute('aria-disabled', false);
-                    
-                    document.getElementById('emailVorhandenError').removeAttribute('hidden', true);
-                    document.getElementById('emailConfirm').setAttribute('hidden', true);
+                const submitButton = document.getElementById('submitRegister');
+                const emailError = document.getElementById('emailVorhandenError');
+                const emailConfirm = document.getElementById('emailConfirm');
+                const emailField = document.getElementById('loginEmail');
+                const passwordField = document.getElementById('loginPassword');
+                const passwordAgainField = document.getElementById('loginPasswordAgain');
 
-                //Wenn die E-Mail keine ist, wird eine Fehlermeldung angezeigt    
-                } else if (data.error === "emailPattern") {
-                    document.getElementById('submitRegister').classList.remove("disabled");
-                    document.getElementById('submitRegister').setAttribute('aria-disabled', false);
-                    
-                    document.getElementById('loginEmail').classList.add('is-invalid');
-                    
-                    document.getElementById('emailVorhandenError').setAttribute('hidden', true);
-                    document.getElementById('emailConfirm').setAttribute('hidden', true);
+                // Helper function to reset error states
+                function resetErrors() {
+                    emailError.setAttribute('hidden', true);
+                    emailConfirm.setAttribute('hidden', true);
+                    emailField.classList.remove('is-invalid');
+                    passwordField.classList.remove('is-invalid');
+                    passwordField.parentElement.classList.remove('is-invalid');
+                    passwordAgainField.classList.remove('is-invalid');
+                    passwordAgainField.parentElement.classList.remove('is-invalid');
+                }
 
-                //Wenn das Passwort nicht den Richtlinien entspricht, wird eine Fehlermeldung angezeigt    
-                } else if (data.error === "passwordPattern") {
-                    document.getElementById('submitRegister').classList.remove("disabled");
-                    document.getElementById('submitRegister').setAttribute('aria-disabled', false);
-                    
-                    document.getElementById('loginPassword').classList.add('is-invalid');
-                    document.getElementById('loginPassword').parentElement.classList.add('is-invalid');
+                // Re-enable the submit button
+                function enableSubmitButton() {
+                    submitButton.classList.remove("disabled");
+                    submitButton.setAttribute('aria-disabled', false);
+                }
 
-                    document.getElementById('emailVorhandenError').setAttribute('hidden', true);
-                    document.getElementById('emailConfirm').setAttribute('hidden', true);
+                resetErrors();
 
-                //Wenn die Passwörter nicht übereinstimmen, wird eine Fehlermeldung angezeigt    
-                } else if (data.error === "passwordMatch") {
-                    document.getElementById('submitRegister').classList.remove("disabled");
-                    document.getElementById('submitRegister').setAttribute('aria-disabled', false);
-                    
-                    document.getElementById('loginPasswordAgain').classList.add('is-invalid');
-                    document.getElementById('loginPasswordAgain').parentElement.classList.add('is-invalid');
+                switch (data.error) {
+                    case "emailVorhanden":
+                        enableSubmitButton();
+                        emailError.removeAttribute('hidden');
+                        break;
 
-                    document.getElementById('emailVorhandenError').setAttribute('hidden', true);
-                    document.getElementById('emailConfirm').setAttribute('hidden', true);
+                    case "emailPattern":
+                        enableSubmitButton();
+                        emailField.classList.add('is-invalid');
+                        break;
 
-                } else {
-                    document.getElementById('emailVorhandenError').setAttribute('hidden', true);
-                    document.getElementById('emailConfirm').removeAttribute('hidden', true);
+                    case "passwordPattern":
+                        enableSubmitButton();
+                        passwordField.classList.add('is-invalid');
+                        passwordField.parentElement.classList.add('is-invalid');
+                        break;
+
+                    case "passwordMatch":
+                        enableSubmitButton();
+                        passwordAgainField.classList.add('is-invalid');
+                        passwordAgainField.parentElement.classList.add('is-invalid');
+                        break;
+
+                    default:
+                        emailConfirm.removeAttribute('hidden');
+                        emailField.setAttribute('disabled', true);
+                        passwordField.setAttribute('disabled', true);
+                        passwordAgainField.setAttribute('disabled', true);
+                        break;
                 }
             }
         }
+    
+        function resendEmail() {
+            // Button deaktivieren
+            document.getElementById('resendEmail').classList.add("disabled");
+            document.getElementById('resendEmail').setAttribute('aria-disabled', true);
+            document.getElementById('resendEmail').classList.add("link-secondary");
+
+            let email = document.getElementById('loginEmail').value.trim();
+            let token = '{{ csrf_token }}';
+            let formData = new FormData;
+            
+            formData.append('todo', 'resendEmail');
+            formData.append('site', 'register');
+            formData.append('email', email);
+            formData.append('csrfmiddlewaretoken', token);
+
+            fetch('/login/', {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (response.ok) { 
+                    // Nach 30 Sekunden wird der Button wieder aktiviert
+                    setTimeout(() => {
+                        document.getElementById('resendEmail').classList.remove("disabled");
+                        document.getElementById('resendEmail').setAttribute('aria-disabled', false);
+                        document.getElementById('resendEmail').classList.remove("link-secondary");
+                    }, 30000);
+                }
+            });
+        }
+
     </script>
 </body>
 </html>

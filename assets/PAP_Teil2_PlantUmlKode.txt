@@ -1,0 +1,36 @@
+@startuml
+start
+
+:Benutzer klickt auf Register-Button und erhält eine E-Mail (TEIL 1);
+
+if (Benutzer klickt auf Link in der E-Mail?) then (ja)
+  if (Bestätigungscode gültig und nicht abgelaufen?) then (ja)
+    :isVerified = True in der Datenbank;
+    :Benutzer wird auf die Seite „Organisation auswählen“ weitergeleitet;
+
+    :API-Call (limit=0), um die Gesamtanzahl zu ermitteln;
+    :API-Call (limit=Gesamtanzahl), um alle Organisationen zu holen;
+    :Organisationen werden als Dropdown-Liste angezeigt;
+    :Benutzer wählt eine oder mehrere Organisationen aus;
+    :Benutzer klickt auf „OK“-Button, um die Auswahl zu bestätigen;
+
+    :Das System sendet eine E-Mail an die Admins der ausgewählten Organisation(en);
+
+    if (Admin bestätigt?) then (ja)
+      :Das System entschlüsselt den Bestätigungscode;
+      :Das System führt einen API-Call aus, um den Benutzer der Organisation zuzuordnen;
+      :Das System sendet eine E-Mail an den Benutzer: „Ihre Organisation wurde angenommen.“;
+      :Benutzer landet auf einer Bestätigungsseite;
+    else (nein)
+      :Das System sendet eine E-Mail an den Benutzer: „Ihre Organisation wurde abgelehnt.“;
+    endif
+
+  else (nein)
+    :Link abgelaufen oder ungültig → Fehlermeldung;
+  endif
+else (nein)
+  :Benutzer hat Link nicht geklickt;
+endif
+
+stop
+@enduml
