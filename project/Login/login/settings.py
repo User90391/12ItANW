@@ -31,7 +31,8 @@ ALLOWED_HOSTS = [
    '172.30.2.104',
    '127.0.0.1',
    'localhost',
-   'd455.de'
+   'd455.de',
+   'register.chirpstack.network'
 ]
 #ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(',') #Using Docker OV environment variable
 
