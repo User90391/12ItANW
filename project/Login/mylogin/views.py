@@ -146,6 +146,4 @@ def sendEmail(registerCode, email):
     except Exception as e:
         print(f"Fehler beim Senden der E-Mail: {e}")
         
-def confirm(request):
-    result_data = [{'id': 1, 'name': 'test'}, {'id': 2, 'name': 'test2'}, {'id': 3, 'name': 'test3'}]
-    return render(request, 'confirmation.html', { 'organizations': result_data })
+
