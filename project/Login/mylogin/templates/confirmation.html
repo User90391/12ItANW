@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'style/style.css' %}">
 </head>
 <body>
     <div class="container">
@@ -63,6 +64,20 @@
                 </div>
             </div>
         {% endif %}
+        
+
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="text-center my-3"><b>Wählen Sie eine Organisation aus</b></div>
+                <select multiple data-multi-select-plugin>
+                    {% for org in organizations %} 
+                        <option value="{{org.name}}" {% if org.id == 1 %}selected{% endif %}>{{org.id}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        
+
 
         <div class="text-center mt-3">
 
@@ -109,6 +124,6 @@
             });
         </script>
     {% endif %}
-
+    <script src="{% static 'script/script.js' %}"></script>
 </body>
 </html>

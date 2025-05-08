@@ -17,8 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from mylogin.views import login
+from mylogin.views import confirm
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', login),
+    path('confirm/', confirm),
 ]

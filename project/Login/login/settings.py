@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,6 +30,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
    '172.30.2.104',
+   '0.0.0.0',
    '127.0.0.1',
    'localhost',
    'd455.de'
@@ -146,3 +148,6 @@ EMAIL_PORT = 465
 DEFAULT_REPLY_TO = 'no_reply@chripstack.network'
 EMAIL_HOST_USER = 'register@chirpstack.network'
 EMAIL_HOST_PASSWORD = 'R3g1st3r16.10-2021'
+
+#API Chirpnode
+API_KEY = os.getenv("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5X2lkIjoiODE3NmZiNDQtYmUwMS00NjhkLTliOTEtNjk0OTMzZmQzYTFjIiwiYXVkIjoiYXMiLCJpc3MiOiJhcyIsIm5iZiI6MTc0MzY2Mzk0NSwic3ViIjoiYXBpX2tleSJ9.ZsP3CWJ4C3uFKm6t1K23I650yn9V_WhDYBslaYHuqdE")

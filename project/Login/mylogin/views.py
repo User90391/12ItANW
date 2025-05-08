@@ -10,8 +10,10 @@ from django.http import JsonResponse
 from django.core.signing import TimestampSigner, SignatureExpired, BadSignature
 
 import re
+import requests
 
 # Create your views here.
+
 
 def login(request):
     message = ""
@@ -83,7 +85,7 @@ def login(request):
             case ['registerCode']:
                 registerCode = request.GET.get("registerCode")
                 userId = ""
-
+                result_data = [{'id': 1, 'name': 'test'}, {'id': 2, 'name': 'test2'}, {'id': 3, 'name': 'test3'}]
                 try:
                     userId = timestamp_signer.unsign(registerCode, max_age=36000)  # 36000 Sekunden = 10 Stunden
 
@@ -93,16 +95,15 @@ def login(request):
                         user.isVerified = True
                         user.save()
                         message = "userConfirmed"
-
-
-
+                        
                         # API Chripstack anfragen
-
-
+                        
+                        
+                        
 
                     else:
                         message = "userAlreadyConfirmed"
-
+                    
                 except SignatureExpired:
                     # Wenn die Signatur abgelaufen ist, müssen wir trotzdem den User finden, um ihm eine neue E-Mail zu schicken
                     userId = timestamp_signer.unsign(registerCode)
@@ -113,7 +114,9 @@ def login(request):
                 except BadSignature:
                     message = "notFound"
                 
-                return render(request, 'confirmation.html', { 'message': message, 'userId': userId})
+                
+                
+                return render(request, 'confirmation.html', { 'message': message, 'userId': userId, 'organizations': result_data })
     
     return render(request, 'register.html', { 'message': message })
 
@@ -142,3 +145,7 @@ def sendEmail(registerCode, email):
         print("E-Mail erfolgreich gesendet!")
     except Exception as e:
         print(f"Fehler beim Senden der E-Mail: {e}")
+        
+def confirm(request):
+    result_data = [{'id': 1, 'name': 'test'}, {'id': 2, 'name': 'test2'}, {'id': 3, 'name': 'test3'}]
+    return render(request, 'confirmation.html', { 'organizations': result_data })
